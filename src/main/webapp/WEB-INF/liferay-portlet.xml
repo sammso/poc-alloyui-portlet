@@ -3,13 +3,31 @@
 
 <liferay-portlet-app>
 	<portlet>
-		<portlet-name>poc-alloyui-portlet</portlet-name>
+		<portlet-name>parameter-portlet</portlet-name>
 		<icon>/icon.png</icon>
 		<instanceable>true</instanceable>
 		<header-portlet-css>/css/main.css</header-portlet-css>
 		<header-portlet-javascript>/js/portlet.js</header-portlet-javascript>
-		<header-portlet-javascript>/js/main.js</header-portlet-javascript>
+		<header-portlet-javascript>/js/parameter-portlet.js</header-portlet-javascript>
 	</portlet>
+	<portlet>
+		<portlet-name>even-portlet</portlet-name>
+		<icon>/icon.png</icon>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<header-portlet-javascript>/js/portlet.js</header-portlet-javascript>
+		<header-portlet-javascript>/js/evenodd-common-portlet.js</header-portlet-javascript>		
+		<header-portlet-javascript>/js/even-portlet.js</header-portlet-javascript>
+	</portlet>	
+	<portlet>
+		<portlet-name>odd-portlet</portlet-name>
+		<icon>/icon.png</icon>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<header-portlet-javascript>/js/portlet.js</header-portlet-javascript>
+		<header-portlet-javascript>/js/evenodd-common-portlet.js</header-portlet-javascript>		
+		<header-portlet-javascript>/js/odd-portlet.js</header-portlet-javascript>
+	</portlet>	
 	<role-mapper>
 		<role-name>administrator</role-name>
 		<role-link>Administrator</role-link>

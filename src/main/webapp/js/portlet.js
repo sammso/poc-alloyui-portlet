@@ -1,62 +1,80 @@
 (function() {
-	YUI.add('base-portlet', function(Y) {	
-		var BasePortlet = Y.Base.create('base-portlet', Y.Base, [], {
-			initializer : function(cfg) {
-				var instance = this;
-			},
-			portletReady : function(portletId, node) {
-				// To be overridden on child classes
-			},
-			all: function(selector, root) {
-				var instance = this;
-				return instance.rootNode.all(selector);
-			},
-			one: function(selector) {
-				var instance = this;
-				return instance.rootNode.one(selector);
-			},
-			byId: function(id) {
-				var instance = this;
-				return instance.rootNode.one("#" + instance.NS + id);
-			},
-			_portletReady: function(portletId, node) {
-				var instance = this;
-				var rootNode = Y.one(node);			
-				instance.rootNode = rootNode.one(".portlet-body");
-				instance.NS = portletId;
-				instance.portletReady(portletId, node);
+	AUI.add('liferay-portlet', function(A) {	
+		var BasePortlet = A.Component.create({
+				AUGMENTS: [Liferay.PortletBase],
+				EXTENDS: A.Base,
+				NAME: 'base-portlet',
+				ATTRS: {},
+				prototype: {
+					initPortlet : function(portletId, node) {
+						// To be overridden on child classes
+					},
+					_initPortlet: function(portletId, node) {
+						var instance = this;
+						var rootNode = A.one(node);			
+						instance.rootNode = rootNode.one(".portlet-body");
+						instance.initPortlet();
+					}
+				}
 			}
-		}, {
-		});
+		);
+		
+		Liferay.BasePortlet = BasePortlet;
 
-		Y.BasePortlet = BasePortlet;
+		var portlets = {};
 
-		var porletClasses = {};
-
-		Y.addPortletClass = function(portletClass) {
-			if(portletClass.NAME!=='base-portlet' && !porletClasses[portletClass.NAME]) {
-				porletClasses[portletClass.NAME] = portletClass;
+		Liferay.createPortlet = function(config) {
+			if (!('EXTENDS' in config)) {
+				config.EXTENDS = Liferay.BasePortlet;
 			}
+			
+			var plugin = config.PLUGIN;
+			var portletName = config.PORTLET_NAME;	
+			
+			var portletFullName = '';
+			
+			if ('PLUGIN_NAME' in config) {
+				portletFullName = "_WAR_" + config.PLUGIN_NAME.replace(/[_]|[-]/g,"");
+			}
+			
+			var portlet;
+						
+			if ('PORTLET_NAME' in config) {
+				portletFullName = config.PORTLET_NAME.replace(/[_]|[-]/g,"") + portletFullName;
+				
+				if (!('NAME' in config)) {
+					config.NAME = portletFullName;
+				}
+				
+				portlet = A.Component.create(config);
+				
+				if( !portlets[portletFullName]) {
+					portlets[portletFullName] = portlet;
+				}
+				else {
+					throw new "Portlet plugin: " + plugin + " portlet-name: " + portletName + " has been already registered"; 
+				}
+			}
+			else {
+				// Case of "abstract" portlets the portlet is not registered
+				// abstract portlets only have NAME config property, but not PORTLET_NAME property
+				portlet = A.Component.create(config);
+			}
+			
+			return portlet;
 		};
 
 		var _portletsReady = function(portletId, node) {
-			var input = Y.one(node).one(
-			"input[name=portletClassName]");
-			if (input) {
-				var portletClassName = input.get('value');
-				var portlet = new porletClasses[portletClassName];
-				if (portlet) {
-					portlet._portletReady.call(portlet, portletId, node);
-				}
-				else {
-					throw "Portlet ID : " + portletId + " does not have corresponding class " + portletClassName + " please check that your .js file has been defined at liferay-portlet.xml";
-				}
+			var portletName = portletId.replace(/[_]INSTANCE[_].+/g,"");
+			if (portlets[portletName]) {
+				var portlet = new portlets[portletName]({namespace: portletId});
+				portlet._initPortlet.call(portlet, portletId, node);
 			}
 		};
 
 		Liferay.Portlet.ready(_portletsReady);
 
-	}, '1.0.0', {
-		requires : [ 'base']
+	}, '', {
+		requires : ['aui-component', 'liferay-portlet-base']
 	});
 }());

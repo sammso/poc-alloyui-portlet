@@ -1,20 +1,19 @@
 (function() {
-	YUI().use('base-portlet','aui-button','json-parse', function(Y) {
-		Y.addPortletClass(Y.Base.create(
-			'poc-portlet',
-			Y.BasePortlet,
-			[],
-			{
-				portletReady : function(portletId, node) {
+	AUI().use('liferay-portlet','aui-button','json-parse', function(A) {
+		Liferay.createPortlet({
+			PLUGIN_NAME: "poc_alloyui_portlet",
+			PORTLET_NAME: "parameter-portlet",
+			prototype: {
+				initPortlet : function() {
 					var instance = this;
 					var rootNode = instance.rootNode;
 					
-					var configJson = instance.one("script").getDOM().innerHTML;
-					var config = Y.JSON.parse(configJson);
-
+					var configJson = rootNode.one("script").getDOM().innerHTML;
+					var config = A.JSON.parse(configJson);
+	
 					var ulNode = instance.one("ul");
 					
-					var addButton = new Y.Button({
+					var addButton = new A.Button({
 						srcNode : instance.one(".addButton")
 					});
 					
@@ -22,7 +21,7 @@
 					
 					addButton.on("click", function(e) {
 						if (i < config.length)  {
-							Y.Node.create("<li>" + config[i].name + "</li>").appendTo(ulNode);
+							A.Node.create("<li>" + config[i].name + "</li>").appendTo(ulNode);
 							i++;
 						}
 						if (i >= config.length) {
@@ -30,8 +29,8 @@
 							clearButton.enable();
 						}
 					});
-
-					var clearButton = new Y.Button({
+	
+					var clearButton = new A.Button({
 						srcNode : instance.one(".clearButton")
 					});
 					
@@ -45,9 +44,10 @@
 					
 					addButton.render();
 					addButton.enable();
+	
 					clearButton.render();
 				}
-			}, {
-		}));
+			}
+		});
 	});
 }());
