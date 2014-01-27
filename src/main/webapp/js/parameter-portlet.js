@@ -8,8 +8,7 @@
 					var instance = this;
 					var rootNode = instance.rootNode;
 					
-					var configJson = rootNode.one("script").getDOM().innerHTML;
-					var config = A.JSON.parse(configJson);
+					var config = instance.getConfig();
 	
 					var ulNode = instance.one("ul");
 					

@@ -6,8 +6,18 @@
 				NAME: 'base-portlet',
 				ATTRS: {},
 				prototype: {
-					initPortlet : function(portletId, node) {
+					initPortlet: function(portletId, node) {
 						// To be overridden on child classes
+					},
+					getConfig: function() {
+						var instance = this;
+						var returnValue;
+						instance.all("script").each(function (node) {
+							if ( node.attr('type')==="portlet/configuration" ) {
+								returnValue = A.JSON.parse(node.html());
+							}
+						});
+						return returnValue;
 					},
 					_initPortlet: function(portletId, node) {
 						var instance = this;
